@@ -22,6 +22,7 @@ body {
   background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.07), transparent 25%),
     radial-gradient(circle at 80% 0%, rgba(52, 211, 153, 0.08), transparent 22%),
     linear-gradient(135deg, #0a0f1f 0%, #0f1329 35%, #0b1022 100%);
+  overflow-x: hidden;
 }
 
 .app-shell {
@@ -285,6 +286,7 @@ body {
 .button-group {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .ghost-btn {
@@ -389,11 +391,127 @@ body {
 }
 
 @media (max-width: 768px) {
+  .app-shell {
+    padding: 14px 12px 22px;
+    gap: 12px;
+  }
+
+  .toolbar {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .toolbar-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .toolbar-title {
+    font-size: 18px;
+  }
+
   .toolbar-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 78vw);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 6px;
+  }
+
+  .toolbar-chip {
+    min-height: 64px;
   }
 
   .canvas-shell {
-    height: 60vh;
+    height: 64vh;
+    min-height: 320px;
+    border-radius: 14px;
+  }
+
+  .minimap {
+    display: none;
+  }
+
+  .submit-bar {
+    position: sticky;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(17, 23, 44, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: var(--shadow);
+    z-index: 40;
+  }
+
+  .button-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .button-group .ghost-btn {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 140px;
+  }
+
+  .primary-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-width: auto;
+    justify-content: center;
+  }
+
+  .summary-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    max-height: 55vh;
+  }
+
+  .summary-panel pre {
+    max-height: 36vh;
+  }
+
+  .node-card {
+    width: min(240px, 82vw);
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar-grid {
+    grid-auto-columns: minmax(200px, 85vw);
+  }
+
+  .toolbar-subtitle {
+    font-size: 13px;
+  }
+
+  .primary-btn {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .ghost-btn {
+    padding: 9px 12px;
+  }
+
+  .toast {
+    font-size: 14px;
+    bottom: 10px;
+  }
+
+  .summary-panel {
+    max-height: 48vh;
   }
 }
