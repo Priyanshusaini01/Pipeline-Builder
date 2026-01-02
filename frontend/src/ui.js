@@ -78,7 +78,6 @@ export const PipelineUI = () => {
 
         if (!reactFlowWrapper.current || !reactFlowInstance) return;
 
-        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
         const transfer = event?.dataTransfer?.getData('application/reactflow');
         if (!transfer) return;
 
@@ -87,9 +86,9 @@ export const PipelineUI = () => {
 
         if (!type) return;
 
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
+        const position = reactFlowInstance.screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
         });
 
         const nodeID = getNodeID(type);
@@ -125,9 +124,9 @@ export const PipelineUI = () => {
           clientY <= bounds.bottom;
         if (!withinCanvas) return;
 
-        const position = reactFlowInstance.project({
-          x: clientX - bounds.left,
-          y: clientY - bounds.top,
+        const position = reactFlowInstance.screenToFlowPosition({
+          x: clientX,
+          y: clientY,
         });
 
         const nodeID = getNodeID(nodeType);
