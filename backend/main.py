@@ -1,15 +1,26 @@
 from collections import defaultdict, deque
 from typing import List, Optional
 
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI()
 
+default_origins = [
+    "*",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://pipeline-builder-rnko.onrender.com",
+]
+env_origins = os.getenv("ALLOW_ORIGINS")
+allow_origins = [o.strip() for o in env_origins.split(",") if o.strip()] if env_origins else default_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
