@@ -6,6 +6,8 @@ import { useStore } from './store';
 export const SubmitButton = () => {
     const noticeTimer = useRef(null);
     const [notice, setNotice] = useState(null);
+    const bannerTimer = useRef(null);
+    const [banner, setBanner] = useState(null);
     const [summaryText, setSummaryText] = useState('');
     const { nodes, edges, removeSelected, clearAll, selectedNodes, selectedEdges } = useStore((state) => ({
         nodes: state.nodes,
@@ -22,6 +24,14 @@ export const SubmitButton = () => {
         }
         setNotice({ text, tone });
         noticeTimer.current = setTimeout(() => setNotice(null), 3600);
+    };
+
+    const showBanner = (text, tone = 'info') => {
+        if (bannerTimer.current) {
+            clearTimeout(bannerTimer.current);
+        }
+        setBanner({ text, tone });
+        bannerTimer.current = setTimeout(() => setBanner(null), 5200);
     };
 
     const handleSubmit = async () => {
@@ -49,6 +59,7 @@ export const SubmitButton = () => {
 
             const summary = `Nodes: ${num_nodes} • Edges: ${num_edges} • DAG: ${is_dag ? 'Yes' : 'No'}`;
             showNotice(summary, 'success');
+            showBanner('Pipeline submitted successfully.', 'success');
 
             try {
                 const snapshot = { nodes, edges, response: payload, savedAt: new Date().toISOString() };
@@ -58,6 +69,7 @@ export const SubmitButton = () => {
             }
         } catch (error) {
             showNotice(`Submit failed: ${error.message}`, 'error');
+            showBanner('Submit failed. Please try again.', 'error');
         }
     };
 
@@ -90,6 +102,11 @@ export const SubmitButton = () => {
     return (
         <>
             <div className="submit-bar">
+                {banner ? (
+                    <div className={`inline-alert ${banner.tone}`}>
+                        <span>{banner.text}</span>
+                    </div>
+                ) : null}
                 <div className="button-group">
                     <button type="button" className="ghost-btn" disabled={!hasSelection} onClick={removeSelected}>
                         Delete Selected

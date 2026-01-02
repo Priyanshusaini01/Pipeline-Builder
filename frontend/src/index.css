@@ -390,6 +390,35 @@ body {
   white-space: pre-wrap;
 }
 
+.inline-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(17, 23, 44, 0.9);
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.inline-alert.success {
+  border-color: rgba(34, 197, 94, 0.45);
+  color: #99f6b7;
+}
+
+.inline-alert.error {
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #ffc0c0;
+}
+
+.inline-alert.warn {
+  border-color: rgba(249, 115, 22, 0.45);
+  color: #ffd7a2;
+}
+
 @media (max-width: 768px) {
   .app-shell {
     padding: 14px 12px 22px;
