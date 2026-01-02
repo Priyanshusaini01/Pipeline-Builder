@@ -30,8 +30,10 @@ export const SubmitButton = () => {
             return;
         }
 
+        const apiUrl = process.env.REACT_APP_API_URL || 'https://pipeline-builder-supm.onrender.com';
+
         try {
-            const response = await fetch('http://localhost:8000/pipelines/parse', {
+            const response = await fetch(`${apiUrl}/pipelines/parse`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nodes, edges }),
