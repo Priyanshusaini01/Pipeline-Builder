@@ -2,7 +2,7 @@
 // Displays the drag-and-drop UI
 // --------------------------------------------------
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
@@ -113,6 +113,47 @@ export const PipelineUI = () => {
       },
       [nodes, edges, onConnect]
     );
+
+    const addNodeFromTouch = useCallback(
+      ({ clientX, clientY, nodeType }) => {
+        if (!reactFlowWrapper.current || !reactFlowInstance) return;
+        const bounds = reactFlowWrapper.current.getBoundingClientRect();
+        const withinCanvas =
+          clientX >= bounds.left &&
+          clientX <= bounds.right &&
+          clientY >= bounds.top &&
+          clientY <= bounds.bottom;
+        if (!withinCanvas) return;
+
+        const position = reactFlowInstance.project({
+          x: clientX - bounds.left,
+          y: clientY - bounds.top,
+        });
+
+        const nodeID = getNodeID(nodeType);
+        const newNode = {
+          id: nodeID,
+          type: nodeType,
+          position,
+          data: getInitNodeData(nodeID, nodeType),
+        };
+
+        addNode(newNode);
+        autoConnect({ node: newNode, nodes, edges, onConnect });
+      },
+      [reactFlowInstance, getNodeID, addNode, nodes, edges, onConnect]
+    );
+
+    useEffect(() => {
+      const handleTouchAdd = (event) => {
+        const { nodeType, clientX, clientY } = event.detail || {};
+        if (!nodeType || clientX === undefined || clientY === undefined) return;
+        addNodeFromTouch({ clientX, clientY, nodeType });
+      };
+
+      window.addEventListener('pipeline:addNodeFromTouch', handleTouchAdd);
+      return () => window.removeEventListener('pipeline:addNodeFromTouch', handleTouchAdd);
+    }, [addNodeFromTouch]);
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
