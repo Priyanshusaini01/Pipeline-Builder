@@ -47,6 +47,8 @@ export const SubmitButton = () => {
         const nodeIds = selectedNodes.map((n) => n.id);
         const edgeIds = selectedEdges.map((e) => e.id);
 
+        let remoteSucceeded = false;
+
         try {
             const response = await fetch(apiUrl, {
                 method: 'DELETE',
@@ -62,12 +64,16 @@ export const SubmitButton = () => {
             const deletedNodes = payload?.deleted_nodes ?? nodeIds.length;
             const deletedEdges = payload?.deleted_edges ?? edgeIds.length;
             showNotice(`Deleted ${deletedNodes} node${deletedNodes === 1 ? '' : 's'} and ${deletedEdges} edge${deletedEdges === 1 ? '' : 's'}.`, 'success');
+            remoteSucceeded = true;
         } catch (error) {
-            showNotice(`Delete failed: ${error.message}`, 'error');
-            return;
+            showNotice(`Delete request failed: ${error.message}. Removed locally.`, 'warn');
+        } finally {
+            removeSelected();
         }
 
-        removeSelected();
+        if (!remoteSucceeded && apiBase) {
+            showBanner('Could not sync delete to server. Check the API URL and connectivity.', 'warn');
+        }
     };
 
     const handleSubmit = async () => {
