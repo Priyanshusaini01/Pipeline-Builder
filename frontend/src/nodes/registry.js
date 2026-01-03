@@ -54,7 +54,7 @@ const definitions = [
     defaults: { url: 'https://api.example.com', method: 'GET' },
     fields: [
       { key: 'url', label: 'URL', type: 'text', placeholder: 'https://...' },
-      { key: 'method', label: 'Method', type: 'select', options: ['GET', 'POST', 'PUT', 'PATCH'] },
+      { key: 'method', label: 'Method', type: 'select', options: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] },
     ],
     inputs: [{ id: 'body', label: 'Body', type: 'target', side: 'left' }],
     outputs: [{ id: 'httpResponse', label: 'Response', type: 'source', side: 'right' }],
