@@ -1,5 +1,4 @@
-// submit.js
-
+ 
 import { useState, useRef } from 'react';
 import { useStore } from './store';
 

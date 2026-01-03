@@ -1,5 +1,4 @@
-// toolbar.js
-
+ 
 import { DraggableNode } from './draggableNode';
 import { palette } from './nodes/registry';
 

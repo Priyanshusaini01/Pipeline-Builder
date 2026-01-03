@@ -1,5 +1,4 @@
-// draggableNode.js
-
+ 
 import { useRef } from 'react';
 
 export const DraggableNode = ({ type, label, icon = '●', accent = '#1C2536' }) => {
