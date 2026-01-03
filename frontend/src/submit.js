@@ -1,6 +1,7 @@
- 
 import { useState, useRef } from 'react';
 import { useStore } from './store';
+
+const apiBaseUrl = () => (process.env.REACT_APP_API_URL || '').trim().replace(/\/+$/, '');
 
 export const SubmitButton = () => {
     const noticeTimer = useRef(null);
@@ -33,13 +34,49 @@ export const SubmitButton = () => {
         bannerTimer.current = setTimeout(() => setBanner(null), 5200);
     };
 
+    const handleDeleteSelected = async () => {
+        const hasSelection = selectedNodes.length > 0 || selectedEdges.length > 0;
+
+        if (!hasSelection) {
+            showNotice('Select nodes or edges to delete first.', 'warn');
+            return;
+        }
+
+        const apiBase = apiBaseUrl();
+        const apiUrl = apiBase ? `${apiBase}/pipelines/nodes` : '/pipelines/nodes';
+        const nodeIds = selectedNodes.map((n) => n.id);
+        const edgeIds = selectedEdges.map((e) => e.id);
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ node_ids: nodeIds, edge_ids: edgeIds }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const deletedNodes = payload?.deleted_nodes ?? nodeIds.length;
+            const deletedEdges = payload?.deleted_edges ?? edgeIds.length;
+            showNotice(`Deleted ${deletedNodes} node${deletedNodes === 1 ? '' : 's'} and ${deletedEdges} edge${deletedEdges === 1 ? '' : 's'}.`, 'success');
+        } catch (error) {
+            showNotice(`Delete failed: ${error.message}`, 'error');
+            return;
+        }
+
+        removeSelected();
+    };
+
     const handleSubmit = async () => {
         if (!nodes.length) {
             showNotice('Add at least one node before submitting.', 'warn');
             return;
         }
 
-        const apiBase = (process.env.REACT_APP_API_URL || '').trim().replace(/\/+$/,'');
+        const apiBase = apiBaseUrl();
         const apiUrl = apiBase ? `${apiBase}/pipelines/parse` : '/pipelines/parse';
 
         try {
@@ -107,7 +144,7 @@ export const SubmitButton = () => {
                     </div>
                 ) : null}
                 <div className="button-group">
-                    <button type="button" className="ghost-btn" disabled={!hasSelection} onClick={removeSelected}>
+                    <button type="button" className="ghost-btn" disabled={!hasSelection} onClick={handleDeleteSelected}>
                         Delete Selected
                     </button>
                     <button type="button" className="ghost-btn" disabled={!hasGraph} onClick={clearAll}>

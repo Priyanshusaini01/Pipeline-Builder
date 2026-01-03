@@ -40,6 +40,11 @@ class Pipeline(BaseModel):
     edges: List[Edge]
 
 
+class DeleteRequest(BaseModel):
+    node_ids: List[str] = []
+    edge_ids: List[str] = []
+
+
 def is_dag(edges: List[Edge]) -> bool:
     graph = defaultdict(list)
     indegree = defaultdict(int)
@@ -78,3 +83,11 @@ def parse_pipeline(pipeline: Pipeline):
     num_edges = len(pipeline.edges)
     dag_status = is_dag(pipeline.edges)
     return {'num_nodes': num_nodes, 'num_edges': num_edges, 'is_dag': dag_status}
+
+
+@app.delete('/pipelines/nodes')
+def delete_nodes(payload: DeleteRequest):
+    # Stateless delete: acknowledge requested IDs so the client can stay in sync.
+    deleted_nodes = len(payload.node_ids)
+    deleted_edges = len(payload.edge_ids)
+    return {'deleted_nodes': deleted_nodes, 'deleted_edges': deleted_edges}
