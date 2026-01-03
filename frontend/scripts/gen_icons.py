@@ -62,24 +62,32 @@ def draw_line(rows, x0, y0, x1, y1, thickness, color):
 
 def render_icon(size):
     w = h = size
-    bg = (12, 16, 33, 255)
-    pipe = (88, 166, 255, 255)
-    glow = (59, 130, 246, 180)
-    node_outer = (18, 27, 52, 255)
-    node_inner = (191, 242, 100, 255)
+    bg = (10, 12, 24, 255)
+    rail = (37, 99, 235, 255)
+    rail_alt = (6, 182, 212, 230)
+    rail_glow = (99, 179, 237, 180)
+    node_outer = (17, 24, 39, 255)
+    node_inner = (234, 179, 8, 255)
     rows = make_canvas(w, h, bg)
 
     draw_rect(rows, 0, 0, w - 1, h - 1, bg)
-    draw_line(rows, int(w*0.18), int(h*0.28), int(w*0.48), int(h*0.30), 2, glow)
-    draw_line(rows, int(w*0.48), int(h*0.30), int(w*0.70), int(h*0.55), 2, pipe)
-    draw_line(rows, int(w*0.48), int(h*0.30), int(w*0.70), int(h*0.18), 2, pipe)
 
-    nodes = [
-        (int(w*0.18), int(h*0.28)),
-        (int(w*0.48), int(h*0.30)),
-        (int(w*0.70), int(h*0.18)),
-        (int(w*0.70), int(h*0.55)),
-    ]
+    # main zig-zag rail
+    p1 = (int(w*0.16), int(h*0.30))
+    p2 = (int(w*0.42), int(h*0.18))
+    p3 = (int(w*0.62), int(h*0.42))
+    p4 = (int(w*0.80), int(h*0.24))
+
+    draw_line(rows, *p1, *p2, 2, rail_glow)
+    draw_line(rows, *p2, *p3, 2, rail)
+    draw_line(rows, *p3, *p4, 2, rail_alt)
+
+    # secondary branch
+    b1 = (int(w*0.42), int(h*0.18))
+    b2 = (int(w*0.64), int(h*0.64))
+    draw_line(rows, *b1, *b2, 2, rail)
+
+    nodes = [p1, p2, p3, p4, b2]
     for cx, cy in nodes:
         draw_circle(rows, cx, cy, max(3, size//18), node_outer)
         draw_circle(rows, cx, cy, max(2, size//24), node_inner)
